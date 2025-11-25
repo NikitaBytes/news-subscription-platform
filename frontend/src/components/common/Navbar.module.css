@@ -1,0 +1,139 @@
+.navbar {
+	position: sticky;
+	top: 0;
+	z-index: 100;
+	background: var(--color-bg);
+	border-bottom: 1px solid transparent;
+	transition: all var(--transition-base);
+}
+
+.scrolled {
+	background: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	border-bottom-color: var(--color-separator);
+	box-shadow: var(--shadow-sm);
+}
+
+@media (prefers-color-scheme: dark) {
+	.scrolled {
+		background: rgba(0, 0, 0, 0.8);
+	}
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: var(--spacing-md) var(--spacing-lg);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--spacing-lg);
+}
+
+.logo {
+	font-size: 1.25rem;
+	font-weight: 600;
+	color: var(--color-text-primary);
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
+}
+
+.nav {
+	display: flex;
+	gap: var(--spacing-sm);
+	flex: 1;
+	justify-content: center;
+}
+
+.navLink {
+	padding: var(--spacing-sm) var(--spacing-md);
+	color: var(--color-text-secondary);
+	text-decoration: none;
+	border-radius: var(--radius-md);
+	transition: all var(--transition-fast);
+	font-weight: 500;
+	position: relative;
+}
+
+.navLink:hover {
+	color: var(--color-primary);
+	background: var(--color-bg-secondary);
+}
+
+.navLink::after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	width: 0;
+	height: 2px;
+	background: var(--color-primary);
+	transform: translateX(-50%);
+	transition: width var(--transition-fast);
+}
+
+.navLink:hover::after {
+	width: 60%;
+}
+
+.actions {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-md);
+}
+
+.userMenu {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-md);
+}
+
+.userInfo {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-sm);
+}
+
+.avatar {
+	width: 36px;
+	height: 36px;
+	border-radius: var(--radius-full);
+	background: linear-gradient(
+		135deg,
+		var(--color-primary),
+		var(--color-primary-hover)
+	);
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 600;
+	font-size: 0.875rem;
+}
+
+.username {
+	font-weight: 500;
+	color: var(--color-text-primary);
+}
+
+.authButtons {
+	display: flex;
+	gap: var(--spacing-sm);
+}
+
+@media (max-width: 768px) {
+	.container {
+		padding: var(--spacing-sm) var(--spacing-md);
+	}
+
+	.nav {
+		display: none;
+	}
+
+	.username {
+		display: none;
+	}
+}

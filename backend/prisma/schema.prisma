@@ -1,0 +1,149 @@
+// Prisma Schema
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User (OWASP: password_hash вместо plaintext)
+model User {
+  id            Int      @id @default(autoincrement())
+  username      String   @unique @db.VarChar(50)
+  email         String   @unique @db.VarChar(100)
+  passwordHash  String   @map("password_hash") @db.VarChar(255)
+  createdAt     DateTime @default(now()) @map("created_at")
+  isActive      Boolean  @default(true) @map("is_active")
+
+  // Relations
+  roles         UserRole[]
+  news          News[]
+  subscriptions Subscription[]
+  actionLogs    UserActionLog[]
+
+  @@map("users")
+}
+
+// Role (Admin, Editor, Subscriber)
+model Role {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique @db.VarChar(50)
+  description String?    @db.Text
+
+  // Relations
+  users       UserRole[]
+
+  @@map("roles")
+}
+
+// Many-to-many между User и Role
+model UserRole {
+  userId Int  @map("user_id")
+  roleId Int  @map("role_id")
+
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+// Category news
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique @db.VarChar(100)
+  description String?  @db.Text
+
+  // Relations
+  news          News[]
+  subscriptions Subscription[]
+
+  @@map("categories")
+}
+
+// News articles
+model News {
+  id         Int       @id @default(autoincrement())
+  title      String    @db.VarChar(255)
+  content    String    @db.Text
+  categoryId Int       @map("category_id")
+  authorId   Int       @map("author_id")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime? @map("updated_at")
+
+  // Relations
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  author   User     @relation(fields: [authorId], references: [id], onDelete: Restrict)
+
+  @@index([categoryId])
+  @@index([authorId])
+  @@map("news")
+}
+
+// User subscriptions to categories
+model Subscription {
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  categoryId Int      @map("category_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, categoryId])
+  @@index([userId])
+  @@index([categoryId])
+  @@map("subscriptions")
+}
+
+// User action logs (NIST: audit trail)
+model UserActionLog {
+  id            Int       @id @default(autoincrement())
+  userId        Int?      @map("user_id")
+  actionType    String    @map("action_type") @db.VarChar(50)
+  actionDetails String?   @map("action_details") @db.Text
+  ipAddress     String?   @map("ip_address") @db.VarChar(45)
+  userAgent     String?   @map("user_agent") @db.Text
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([actionType])
+  @@index([createdAt])
+  @@map("user_action_logs")
+}
+
+// Application error logs
+model AppErrorLog {
+  id        Int      @id @default(autoincrement())
+  errorType String   @map("error_type") @db.VarChar(100)
+  message   String   @db.Text
+  url       String?  @db.VarChar(500)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([errorType])
+  @@index([createdAt])
+  @@map("app_error_logs")
+}
+
+// HTTP error logs
+model HttpErrorLog {
+  id         Int      @id @default(autoincrement())
+  statusCode Int      @map("status_code")
+  method     String   @db.VarChar(10)
+  url        String   @db.VarChar(500)
+  ipAddress  String?  @map("ip_address") @db.VarChar(45)
+  message    String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([statusCode])
+  @@index([createdAt])
+  @@map("http_error_logs")
+}

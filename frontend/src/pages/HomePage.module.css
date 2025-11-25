@@ -1,0 +1,121 @@
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.hero {
+	text-align: center;
+	padding: var(--spacing-xl) 0;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.title {
+	font-size: clamp(2rem, 5vw, 3.5rem);
+	font-weight: 700;
+	margin-bottom: var(--spacing-md);
+	line-height: 1.2;
+}
+
+.highlight {
+	background: linear-gradient(
+		135deg,
+		var(--color-primary),
+		var(--color-primary-hover)
+	);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.subtitle {
+	font-size: clamp(1rem, 3vw, 1.25rem);
+	color: var(--color-text-secondary);
+	margin-bottom: var(--spacing-xl);
+	line-height: 1.6;
+}
+
+.actions {
+	display: flex;
+	gap: var(--spacing-md);
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.features {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: var(--spacing-lg);
+	margin: var(--spacing-xl) 0;
+}
+
+.featureCard {
+	text-align: center;
+	transition: transform var(--transition-base);
+}
+
+.featureIcon {
+	font-size: 3rem;
+	margin-bottom: var(--spacing-md);
+}
+
+.featureTitle {
+	font-size: 1.25rem;
+	font-weight: 600;
+	margin-bottom: var(--spacing-sm);
+	color: var(--color-text-primary);
+}
+
+.featureDescription {
+	color: var(--color-text-secondary);
+	line-height: 1.6;
+}
+
+.cta {
+	margin-top: var(--spacing-xl);
+	padding-top: var(--spacing-xl);
+}
+
+.ctaCard {
+	text-align: center;
+	background: linear-gradient(
+		135deg,
+		var(--color-primary-light),
+		var(--color-bg-secondary)
+	);
+	border: 2px solid var(--color-border);
+}
+
+.ctaTitle {
+	font-size: 2rem;
+	font-weight: 700;
+	margin-bottom: var(--spacing-sm);
+}
+
+.ctaText {
+	color: var(--color-text-secondary);
+	font-size: 1.125rem;
+	margin-bottom: var(--spacing-lg);
+}
+
+.ctaActions {
+	display: flex;
+	gap: var(--spacing-md);
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+	.container {
+		padding: var(--spacing-lg) var(--spacing-md);
+	}
+
+	.hero {
+		padding: var(--spacing-lg) 0;
+	}
+
+	.features {
+		grid-template-columns: 1fr;
+	}
+}

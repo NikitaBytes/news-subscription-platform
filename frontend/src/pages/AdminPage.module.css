@@ -1,0 +1,253 @@
+.container {
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.header {
+	margin-bottom: var(--spacing-xl);
+}
+
+.title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin: 0 0 var(--spacing-xs) 0;
+	color: var(--color-text-primary);
+}
+
+.subtitle {
+	font-size: 1.125rem;
+	color: var(--color-text-secondary);
+	margin: 0;
+}
+
+.tabs {
+	display: flex;
+	gap: var(--spacing-sm);
+	margin-bottom: var(--spacing-xl);
+	border-bottom: 2px solid var(--color-border);
+	flex-wrap: wrap;
+}
+
+.tab {
+	padding: var(--spacing-md) var(--spacing-lg);
+	background: transparent;
+	border: none;
+	color: var(--color-text-secondary);
+	font-weight: 500;
+	cursor: pointer;
+	transition: all var(--transition-fast);
+	border-bottom: 2px solid transparent;
+	margin-bottom: -2px;
+	font-size: 0.9375rem;
+}
+
+.tab:hover {
+	color: var(--color-text-primary);
+	background: var(--color-bg-tertiary);
+}
+
+.tab.active {
+	color: var(--color-primary);
+	border-bottom-color: var(--color-primary);
+}
+
+.message {
+	padding: var(--spacing-md);
+	margin-bottom: var(--spacing-lg);
+	border-radius: var(--radius-lg);
+	font-weight: 500;
+}
+
+.message.success {
+	background: var(--color-success-bg);
+	color: var(--color-success);
+	border: 1px solid var(--color-success);
+}
+
+.message.error {
+	background: var(--color-danger-bg);
+	color: var(--color-danger);
+	border: 1px solid var(--color-danger);
+}
+
+.tableContainer {
+	background: var(--color-bg-elevated);
+	border-radius: var(--radius-lg);
+	overflow: hidden;
+	box-shadow: var(--shadow-sm);
+	border: 1px solid var(--color-border);
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.table th {
+	padding: var(--spacing-md);
+	text-align: left;
+	font-weight: 600;
+	color: var(--color-text-primary);
+	background: var(--color-bg-secondary);
+	border-bottom: 2px solid var(--color-border);
+	font-size: 0.875rem;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.table td {
+	padding: var(--spacing-md);
+	border-bottom: 1px solid var(--color-border);
+	color: var(--color-text-primary);
+}
+
+.table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.table tbody tr:hover {
+	background: var(--color-bg-secondary);
+}
+
+.rolesContainer {
+	display: flex;
+	gap: var(--spacing-xs);
+	flex-wrap: wrap;
+}
+
+.roleBadge {
+	padding: 4px 8px;
+	border-radius: var(--radius-sm);
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.roleBadge.admin {
+	background: #ffe5e5;
+	color: #dc3545;
+}
+
+.roleBadge.editor {
+	background: #e5f3ff;
+	color: #007aff;
+}
+
+.roleBadge.subscriber {
+	background: #e5f9e7;
+	color: #28a745;
+}
+
+.statusBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--spacing-xs);
+	font-weight: 600;
+	font-size: 0.875rem;
+}
+
+.statusBadge.active {
+	color: var(--color-success);
+}
+
+.statusBadge.inactive {
+	color: var(--color-danger);
+}
+
+.actionButtons {
+	display: flex;
+	gap: var(--spacing-xs);
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.roleForm {
+	display: flex;
+	gap: var(--spacing-xs);
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.select {
+	padding: var(--spacing-sm);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-md);
+	background: var(--color-bg-elevated);
+	color: var(--color-text-primary);
+	font-size: 0.875rem;
+	cursor: pointer;
+	transition: all var(--transition-fast);
+}
+
+.select:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 4px var(--color-primary-alpha);
+}
+
+.empty {
+	text-align: center;
+	padding: var(--spacing-xl);
+	color: var(--color-text-secondary);
+}
+
+.emptyIcon {
+	font-size: 4rem;
+	margin-bottom: var(--spacing-md);
+}
+
+.logTime {
+	font-size: 0.8125rem;
+	color: var(--color-text-secondary);
+	white-space: nowrap;
+}
+
+.logMessage {
+	max-width: 500px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.statusCode {
+	font-family: "SF Mono", "Monaco", "Consolas", monospace;
+	font-weight: 600;
+	padding: 2px 6px;
+	border-radius: var(--radius-sm);
+	font-size: 0.8125rem;
+}
+
+.statusCode.error4xx {
+	background: #fff3cd;
+	color: #856404;
+}
+
+.statusCode.error5xx {
+	background: #ffe5e5;
+	color: #dc3545;
+}
+
+@media (max-width: 768px) {
+	.container {
+		padding: var(--spacing-lg) var(--spacing-md);
+	}
+
+	.title {
+		font-size: 2rem;
+	}
+
+	.tableContainer {
+		overflow-x: auto;
+	}
+
+	.table {
+		min-width: 800px;
+	}
+
+	.actionButtons {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
