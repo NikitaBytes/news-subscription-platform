@@ -112,7 +112,14 @@ export const LoginForm: React.FC = () => {
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					transition={{ delay: 0.6 }}
-				></motion.div>
+				>
+					<p className={styles.demoTitle}>🎯 Тестовые аккаунты:</p>
+					<div className={styles.demoAccounts}>
+						<div className={styles.demoAccount}>
+							<strong>Админ:</strong> admin@example.com / admin123
+						</div>
+					</div>
+				</motion.div>
 			</motion.div>
 		</div>
 	);

@@ -1,7 +1,12 @@
 // React Context for Authentication
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { authApi } from "../api/auth.api";
+import {
+	setUnauthorizedCallback,
+	setErrorNavigationCallback,
+} from "../api/client";
 import type { User } from "../types";
 
 interface AuthContextType {
@@ -28,6 +33,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 		localStorage.getItem("token")
 	);
 	const [isLoading, setIsLoading] = useState(true);
+	const navigate = useNavigate();
+
+	// Устанавливаем callback для обработки 401 ошибок
+	useEffect(() => {
+		setUnauthorizedCallback(() => {
+			navigate("/login");
+		});
+
+		// Устанавливаем callback для обработки других HTTP ошибок
+		setErrorNavigationCallback((status: number) => {
+			if (status === 403) {
+				navigate("/403");
+			} else if (status === 404) {
+				// Для 404 не редиректим, чтобы роутер сам показал NotFoundPage
+				// Или можем редиректить если нужно
+				// navigate("/404");
+			} else if (status >= 500) {
+				// Для 500+ ошибок не редиректим - ErrorBoundary покажет ServerErrorPage
+				// Или можем показать отдельную страницу если нужно
+				// navigate("/500");
+			}
+		});
+	}, [navigate]);
 
 	useEffect(() => {
 		const storedUser = localStorage.getItem("user");
@@ -47,12 +75,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 		}
 	};
 
-	const logout = () => {
-		authApi.logout().catch(console.error);
-		setUser(null);
-		setToken(null);
-		localStorage.removeItem("token");
-		localStorage.removeItem("user");
+	const logout = async () => {
+		try {
+			await authApi.logout();
+		} catch (error) {
+			console.error("Logout error:", error);
+		} finally {
+			setUser(null);
+			setToken(null);
+			localStorage.removeItem("token");
+			localStorage.removeItem("user");
+		}
 	};
 
 	const register = async (

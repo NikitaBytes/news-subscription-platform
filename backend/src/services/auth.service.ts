@@ -64,7 +64,7 @@ export async function loginUser(data: LoginInput) {
   }
 
   if (!user.isActive) {
-    throw new Error('Account is deactivated');
+    throw new Error('Account has been deactivated');
   }
 
   const valid = await verifyPassword(data.password, user.passwordHash);

@@ -39,11 +39,11 @@ export async function updateRole(request: FastifyRequest, reply: FastifyReply) {
     const data = updateUserRoleSchema.parse(request.body);
     const currentUserId = request.user?.userId;
 
-    // Check: admin cannot remove their own admin role
-    if (Number(id) === currentUserId && data.roleId !== 1) {
+    // Check: cannot modify own roles
+    if (Number(id) === currentUserId) {
       return reply.status(403).send({
         success: false,
-        error: 'You cannot change your own administrator role',
+        error: 'You cannot modify your own roles',
       });
     }
 
@@ -99,10 +99,10 @@ export async function updateStatus(request: FastifyRequest, reply: FastifyReply)
     const currentUserId = request.user?.userId;
 
     // Check: admin cannot deactivate themselves
-    if (Number(id) === currentUserId && !data.isActive) {
+    if (Number(id) === currentUserId) {
       return reply.status(403).send({
         success: false,
-        error: 'You cannot deactivate your own account',
+        error: 'You cannot modify your own account status',
       });
     }
 
@@ -136,11 +136,11 @@ export async function removeRole(request: FastifyRequest, reply: FastifyReply) {
     const { id, roleId } = request.params as { id: string; roleId: string };
     const currentUserId = request.user?.userId;
 
-    // Check: admin cannot remove their own admin role
-    if (Number(id) === currentUserId && Number(roleId) === 1) {
+    // Check: cannot modify own roles
+    if (Number(id) === currentUserId) {
       return reply.status(403).send({
         success: false,
-        error: 'You cannot remove your own administrator role',
+        error: 'You cannot modify your own roles',
       });
     }
 

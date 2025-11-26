@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  # PostgreSQL
+  # PostgreSQL база данных
   db:
     image: postgres:16-alpine
     container_name: news_postgres
@@ -40,13 +40,13 @@ services:
       PORT: 3000
       HOST: "0.0.0.0"
       NODE_ENV: "production"
-      CORS_ORIGIN: "http://localhost:80"
+      CORS_ORIGIN: "https://www.znapster.com"
       BCRYPT_ROUNDS: 12
     ports:
       - "3000:3000"
     networks:
       - news_network
-    command: sh -c "npx prisma migrate deploy && npx prisma db seed && node dist/server.js"
+    command: sh -c "npx prisma db push --accept-data-loss && npx prisma db seed && npx tsx src/server.ts"
 
   # Frontend (Nginx serving static files)
   frontend:
@@ -56,7 +56,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "80:80"
+      - "8080:80"
     volumes:
       - ./frontend/dist:/usr/share/nginx/html:ro
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
@@ -71,7 +71,7 @@ services:
     depends_on:
       - db
     ports:
-      - "8080:8080"
+      - "8081:8080"
     environment:
       ADMINER_DEFAULT_SERVER: db
     networks:

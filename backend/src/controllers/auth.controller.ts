@@ -28,12 +28,12 @@ export async function register(request: FastifyRequest, reply: FastifyReply) {
         createdAt: user.createdAt,
         isActive: user.isActive,
       },
-      message: 'Registration successful',
+      message: 'Registration was successful',
     });
   } catch (error: any) {
     reply.status(400).send({
       success: false,
-      error: error.message || 'Registration error',
+      error: error.message || 'Registration failed',
     });
   }
 }
@@ -74,20 +74,20 @@ export async function login(
         },
         token,
       },
-      message: 'Login successful',
+      message: 'Login was successful',
     });
   } catch (error: any) {
     // Logging failed login attempt
     await logUserAction({
       actionType: ACTION_TYPES.LOGIN,
-      actionDetails: `Failed attempt: ${error.message}`,
+      actionDetails: `Failed login attempt: ${error.message}`,
       ipAddress: request.ip,
       userAgent: request.headers['user-agent'],
     });
 
     reply.status(401).send({
       success: false,
-      error: error.message || 'Login error',
+      error: error.message || 'Login failed',
     });
   }
 }

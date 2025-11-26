@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { apiClient } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { Button } from "../components/ui";
+import { LogsViewer } from "../components/admin/LogsViewer";
 import styles from "./AdminPage.module.css";
 
 interface User {
@@ -15,16 +16,6 @@ interface User {
 	roles: Array<{ role: { id: number; name: string } }>;
 }
 
-interface Log {
-	id: number;
-	actionType?: string;
-	statusCode?: number;
-	errorType?: string;
-	message?: string;
-	createdAt: string;
-	user?: { username: string };
-}
-
 interface Message {
 	type: "success" | "error";
 	text: string;
@@ -32,9 +23,6 @@ interface Message {
 
 export const AdminPage: React.FC = () => {
 	const [users, setUsers] = useState<User[]>([]);
-	const [actionLogs, setActionLogs] = useState<Log[]>([]);
-	const [httpLogs, setHttpLogs] = useState<Log[]>([]);
-	const [appLogs, setAppLogs] = useState<Log[]>([]);
 	const [activeTab, setActiveTab] = useState<
 		"users" | "actions" | "http" | "app"
 	>("users");
@@ -46,7 +34,6 @@ export const AdminPage: React.FC = () => {
 
 	useEffect(() => {
 		loadUsers();
-		loadLogs();
 	}, []);
 
 	const loadUsers = async () => {
@@ -55,22 +42,6 @@ export const AdminPage: React.FC = () => {
 			if (data.success) setUsers(data.data);
 		} catch (error) {
 			console.error("Ошибка загрузки пользователей:", error);
-		}
-	};
-
-	const loadLogs = async () => {
-		try {
-			const [actions, http, app] = await Promise.all([
-				apiClient.get("/logs/user-actions?limit=50"),
-				apiClient.get("/logs/http-errors?limit=50"),
-				apiClient.get("/logs/app-errors?limit=50"),
-			]);
-
-			if (actions.data.success) setActionLogs(actions.data.data);
-			if (http.data.success) setHttpLogs(http.data.data);
-			if (app.data.success) setAppLogs(app.data.data);
-		} catch (error) {
-			console.error("Ошибка загрузки логов:", error);
 		}
 	};
 
@@ -210,7 +181,7 @@ export const AdminPage: React.FC = () => {
 						activeTab === "actions" ? styles.active : ""
 					}`}
 				>
-					📝 Действия ({actionLogs.length})
+					📝 Действия пользователей
 				</button>
 				<button
 					onClick={() => setActiveTab("http")}
@@ -218,7 +189,7 @@ export const AdminPage: React.FC = () => {
 						activeTab === "http" ? styles.active : ""
 					}`}
 				>
-					🔴 HTTP Ошибки ({httpLogs.length})
+					🔴 HTTP Ошибки
 				</button>
 				<button
 					onClick={() => setActiveTab("app")}
@@ -226,7 +197,7 @@ export const AdminPage: React.FC = () => {
 						activeTab === "app" ? styles.active : ""
 					}`}
 				>
-					⚠️ App Ошибки ({appLogs.length})
+					⚠️ Ошибки приложения
 				</button>
 			</div>
 
@@ -373,134 +344,11 @@ export const AdminPage: React.FC = () => {
 				</motion.div>
 			)}
 
-			{activeTab === "actions" && (
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-				>
-					<div className={styles.tableContainer}>
-						<table className={styles.table}>
-							<thead>
-								<tr>
-									<th>Время</th>
-									<th>Пользователь</th>
-									<th>Действие</th>
-								</tr>
-							</thead>
-							<tbody>
-								{actionLogs.length === 0 ? (
-									<tr>
-										<td colSpan={3} className={styles.empty}>
-											<div className={styles.emptyIcon}>📝</div>
-											<p>Действия не найдены</p>
-										</td>
-									</tr>
-								) : (
-									actionLogs.map((log) => (
-										<tr key={log.id}>
-											<td className={styles.logTime}>
-												{new Date(log.createdAt).toLocaleString("ru-RU")}
-											</td>
-											<td>{log.user?.username || "Гость"}</td>
-											<td>{log.actionType}</td>
-										</tr>
-									))
-								)}
-							</tbody>
-						</table>
-					</div>
-				</motion.div>
-			)}
+			{activeTab === "actions" && <LogsViewer type="user-actions" />}
 
-			{activeTab === "http" && (
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-				>
-					<div className={styles.tableContainer}>
-						<table className={styles.table}>
-							<thead>
-								<tr>
-									<th>Время</th>
-									<th>Код</th>
-									<th>Сообщение</th>
-								</tr>
-							</thead>
-							<tbody>
-								{httpLogs.length === 0 ? (
-									<tr>
-										<td colSpan={3} className={styles.empty}>
-											<div className={styles.emptyIcon}>🔴</div>
-											<p>HTTP ошибки не найдены</p>
-										</td>
-									</tr>
-								) : (
-									httpLogs.map((log) => (
-										<tr key={log.id}>
-											<td className={styles.logTime}>
-												{new Date(log.createdAt).toLocaleString("ru-RU")}
-											</td>
-											<td>
-												<span
-													className={`${styles.statusCode} ${
-														log.statusCode && log.statusCode >= 500
-															? styles.error5xx
-															: styles.error4xx
-													}`}
-												>
-													{log.statusCode}
-												</span>
-											</td>
-											<td className={styles.logMessage}>
-												{log.message || "N/A"}
-											</td>
-										</tr>
-									))
-								)}
-							</tbody>
-						</table>
-					</div>
-				</motion.div>
-			)}
+			{activeTab === "http" && <LogsViewer type="http-errors" />}
 
-			{activeTab === "app" && (
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-				>
-					<div className={styles.tableContainer}>
-						<table className={styles.table}>
-							<thead>
-								<tr>
-									<th>Время</th>
-									<th>Тип</th>
-									<th>Сообщение</th>
-								</tr>
-							</thead>
-							<tbody>
-								{appLogs.length === 0 ? (
-									<tr>
-										<td colSpan={3} className={styles.empty}>
-											<div className={styles.emptyIcon}>⚠️</div>
-											<p>Ошибки приложения не найдены</p>
-										</td>
-									</tr>
-								) : (
-									appLogs.map((log) => (
-										<tr key={log.id}>
-											<td className={styles.logTime}>
-												{new Date(log.createdAt).toLocaleString("ru-RU")}
-											</td>
-											<td>{log.errorType}</td>
-											<td className={styles.logMessage}>{log.message}</td>
-										</tr>
-									))
-								)}
-							</tbody>
-						</table>
-					</div>
-				</motion.div>
-			)}
+			{activeTab === "app" && <LogsViewer type="app-errors" />}
 		</div>
 	);
 };

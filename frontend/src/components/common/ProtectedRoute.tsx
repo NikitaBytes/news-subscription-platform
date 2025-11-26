@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../../context/AuthContext";
 import { ROLES } from "../../utils/constants";
+import { ForbiddenPage } from "../../pages/ForbiddenPage";
 
 interface ProtectedRouteProps {
 	children: React.ReactNode;
@@ -66,32 +67,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 	}
 
 	if (requiredRole && !hasAccess(user.roles, requiredRole)) {
-		return (
-			<motion.div
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				style={{
-					padding: "4rem 2rem",
-					textAlign: "center",
-					maxWidth: "600px",
-					margin: "0 auto",
-				}}
-			>
-				<div style={{ fontSize: "4rem", marginBottom: "1rem" }}>🔒</div>
-				<h2 style={{ marginBottom: "0.5rem" }}>Недостаточно прав доступа</h2>
-				<p
-					style={{
-						color: "var(--color-text-secondary)",
-						marginBottom: "0.5rem",
-					}}
-				>
-					Требуется роль: <strong>{requiredRole}</strong>
-				</p>
-				<p style={{ color: "var(--color-text-tertiary)" }}>
-					Ваши роли: {user.roles?.join(", ") || "нет"}
-				</p>
-			</motion.div>
-		);
+		return <ForbiddenPage />;
 	}
 
 	return <>{children}</>;

@@ -11,6 +11,7 @@ import { errorHandler } from './middlewares/error.middleware';
 import fastifyCors from '@fastify/cors';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyJwt from '@fastify/jwt';
+import httpErrorLogger from './plugins/httpErrorLogger';
 
 // Routes
 import authRoutes from './routes/auth.routes';
@@ -59,6 +60,9 @@ fastify.register(fastifyJwt, {
   },
 });
 
+// Register HTTP error logger plugin
+fastify.register(httpErrorLogger);
+
 // Register routes
 fastify.register(authRoutes, { prefix: '/api/auth' });
 fastify.register(newsRoutes, { prefix: '/api/news' });
@@ -81,7 +85,7 @@ const start = async () => {
     // Wait for all plugins to load
     await fastify.ready();
     await fastify.listen({ port: env.PORT, host: env.HOST });
-    console.log(`🚀 Server running at http://${env.HOST}:${env.PORT}`);
+    console.log(`🚀 Server is running at http://${env.HOST}:${env.PORT}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

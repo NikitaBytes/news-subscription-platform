@@ -1,0 +1,301 @@
+/* LogsViewer Component Styles */
+
+.container {
+	width: 100%;
+}
+
+/* Filters */
+.filters {
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	border-radius: 12px;
+	padding: 1.5rem;
+	margin-bottom: 2rem;
+}
+
+.filterRow {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	gap: 1rem;
+	margin-bottom: 1rem;
+}
+
+.filterRow:last-of-type {
+	margin-bottom: 1.5rem;
+}
+
+.filterGroup {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.filterGroup label {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--color-text-secondary);
+}
+
+.input,
+.select {
+	padding: 0.625rem;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	background: var(--color-background);
+	color: var(--color-text);
+	font-size: 0.875rem;
+	transition: border-color 0.2s;
+}
+
+.input:focus,
+.select:focus {
+	outline: none;
+	border-color: var(--color-primary);
+}
+
+.sortControls {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.sortControls .select {
+	flex: 1;
+}
+
+.sortButton {
+	padding: 0.625rem 1rem;
+	background: var(--color-background);
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 1.125rem;
+	transition: all 0.2s;
+}
+
+.sortButton:hover {
+	background: var(--color-surface);
+	border-color: var(--color-primary);
+}
+
+.filterActions {
+	display: flex;
+	gap: 0.75rem;
+	justify-content: flex-end;
+}
+
+/* Table */
+.tableContainer {
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	border-radius: 12px;
+	overflow: hidden;
+	margin-bottom: 1.5rem;
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.table thead {
+	background: var(--color-background);
+	border-bottom: 2px solid var(--color-border);
+}
+
+.table th {
+	padding: 1rem;
+	text-align: left;
+	font-weight: 600;
+	font-size: 0.875rem;
+	color: var(--color-text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.table td {
+	padding: 1rem;
+	border-bottom: 1px solid var(--color-border);
+	font-size: 0.875rem;
+}
+
+.table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.table tbody tr:hover {
+	background: var(--color-background);
+}
+
+.empty {
+	text-align: center;
+	padding: 3rem 1rem !important;
+	color: var(--color-text-secondary);
+	font-size: 1rem;
+}
+
+/* Status badges */
+.statusCode {
+	display: inline-block;
+	padding: 0.25rem 0.75rem;
+	border-radius: 6px;
+	font-weight: 600;
+	font-size: 0.75rem;
+}
+
+.error4xx {
+	background: #fef3c7;
+	color: #92400e;
+}
+
+.error5xx {
+	background: #fee2e2;
+	color: #991b1b;
+}
+
+.actionType,
+.errorType,
+.method {
+	display: inline-block;
+	padding: 0.25rem 0.75rem;
+	background: var(--color-background);
+	border: 1px solid var(--color-border);
+	border-radius: 6px;
+	font-size: 0.75rem;
+	font-weight: 500;
+	font-family: "Courier New", monospace;
+}
+
+.url,
+.message {
+	max-width: 300px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 0.8125rem;
+	color: var(--color-text-secondary);
+}
+
+.ip {
+	font-family: "Courier New", monospace;
+	font-size: 0.8125rem;
+	color: var(--color-text-tertiary);
+}
+
+/* Pagination */
+.pagination {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1rem;
+	background: var(--color-surface);
+	border: 1px solid var(--color-border);
+	border-radius: 12px;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+
+.paginationInfo {
+	font-size: 0.875rem;
+	color: var(--color-text-secondary);
+}
+
+.paginationControls {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	flex-wrap: wrap;
+}
+
+.limitSelect {
+	padding: 0.5rem;
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	background: var(--color-background);
+	color: var(--color-text);
+	font-size: 0.875rem;
+	cursor: pointer;
+}
+
+.pageButtons {
+	display: flex;
+	gap: 0.5rem;
+	align-items: center;
+}
+
+.pageButton {
+	padding: 0.5rem 1rem;
+	background: var(--color-background);
+	border: 1px solid var(--color-border);
+	border-radius: 8px;
+	color: var(--color-text);
+	cursor: pointer;
+	font-size: 0.875rem;
+	transition: all 0.2s;
+}
+
+.pageButton:hover:not(:disabled) {
+	background: var(--color-surface);
+	border-color: var(--color-primary);
+	color: var(--color-primary);
+}
+
+.pageButton:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.pageInfo {
+	font-size: 0.875rem;
+	font-weight: 500;
+	padding: 0 0.5rem;
+	color: var(--color-text);
+}
+
+/* Loading */
+.loading {
+	text-align: center;
+	padding: 3rem;
+	font-size: 1.125rem;
+	color: var(--color-text-secondary);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.filterRow {
+		grid-template-columns: 1fr;
+	}
+
+	.pagination {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.paginationControls {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.pageButtons {
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	.pageButton {
+		flex: 1;
+		min-width: 80px;
+	}
+
+	.table {
+		font-size: 0.75rem;
+	}
+
+	.table th,
+	.table td {
+		padding: 0.75rem 0.5rem;
+	}
+
+	.url,
+	.message {
+		max-width: 150px;
+	}
+}

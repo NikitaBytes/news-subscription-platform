@@ -3,6 +3,9 @@
 # Этап 1: Сборка
 FROM node:20-alpine AS builder
 
+# Устанавливаем OpenSSL для Prisma
+RUN apk add --no-cache openssl libc6-compat
+
 WORKDIR /app
 
 # Копируем package.json и lock файлы
@@ -24,6 +27,9 @@ RUN npm run build
 # Этап 2: Production образ
 FROM node:20-alpine
 
+# Устанавливаем OpenSSL для Prisma
+RUN apk add --no-cache openssl libc6-compat
+
 WORKDIR /app
 
 # Устанавливаем только production зависимости + tsx для seed
@@ -32,6 +38,7 @@ RUN npm ci --only=production && npm install tsx
 
 # Копируем скомпилированный код и Prisma
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/src ./src
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
 
