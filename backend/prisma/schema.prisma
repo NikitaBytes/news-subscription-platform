@@ -1,4 +1,4 @@
-// Prisma Schema
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,7 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// User (OWASP: password_hash instead of plaintext)
+// Пользователи (OWASP: password_hash вместо plaintext)
 model User {
   id            Int      @id @default(autoincrement())
   username      String   @unique @db.VarChar(50)
@@ -22,11 +22,12 @@ model User {
   news          News[]
   subscriptions Subscription[]
   actionLogs    UserActionLog[]
+  refreshTokens RefreshToken[]
 
   @@map("users")
 }
 
-// Roles (Admin, Editor, Subscriber)
+// Роли (Admin, Editor, Subscriber)
 model Role {
   id          Int        @id @default(autoincrement())
   name        String     @unique @db.VarChar(50)
@@ -50,7 +51,7 @@ model UserRole {
   @@map("user_roles")
 }
 
-// Categories
+// Категории новостей
 model Category {
   id          Int      @id @default(autoincrement())
   name        String   @unique @db.VarChar(100)
@@ -63,7 +64,7 @@ model Category {
   @@map("categories")
 }
 
-// News articles
+// Новости
 model News {
   id         Int       @id @default(autoincrement())
   title      String    @db.VarChar(255)
@@ -82,7 +83,7 @@ model News {
   @@map("news")
 }
 
-// User subscriptions to categories
+// Подписки пользователей на категории
 model Subscription {
   id         Int      @id @default(autoincrement())
   userId     Int      @map("user_id")
@@ -99,7 +100,7 @@ model Subscription {
   @@map("subscriptions")
 }
 
-// User action logs (NIST: audit trail)
+// Логи действий пользователей (NIST: audit trail)
 model UserActionLog {
   id            Int       @id @default(autoincrement())
   userId        Int?      @map("user_id")
@@ -118,7 +119,28 @@ model UserActionLog {
   @@map("user_action_logs")
 }
 
-// Application error logs
+// Refresh Tokens для безопасной аутентификации (OWASP: Secure Token Storage)
+// Fingerprint hash для защиты от кражи токенов
+model RefreshToken {
+  id             Int       @id @default(autoincrement())
+  userId         Int       @map("user_id")
+  token          String    @unique @db.VarChar(500)
+  fingerprintHash String   @map("fingerprint_hash") @db.VarChar(255)
+  expiresAt      DateTime  @map("expires_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  ipAddress      String?   @map("ip_address") @db.VarChar(45)
+  userAgent      String?   @map("user_agent") @db.Text
+  
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+// Логи ошибок приложения
 model AppErrorLog {
   id        Int      @id @default(autoincrement())
   errorType String   @map("error_type") @db.VarChar(100)
@@ -131,7 +153,7 @@ model AppErrorLog {
   @@map("app_error_logs")
 }
 
-// HTTP error logs
+// Логи HTTP ошибок
 model HttpErrorLog {
   id         Int      @id @default(autoincrement())
   statusCode Int      @map("status_code")

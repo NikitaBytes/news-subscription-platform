@@ -16,6 +16,12 @@ interface User {
 	roles: Array<{ role: { id: number; name: string } }>;
 }
 
+interface Role {
+	id: number;
+	name: string;
+	description: string;
+}
+
 interface Message {
 	type: "success" | "error";
 	text: string;
@@ -23,17 +29,19 @@ interface Message {
 
 export const AdminPage: React.FC = () => {
 	const [users, setUsers] = useState<User[]>([]);
+	const [roles, setRoles] = useState<Role[]>([]);
 	const [activeTab, setActiveTab] = useState<
 		"users" | "actions" | "http" | "app"
 	>("users");
 	const [editingUserId, setEditingUserId] = useState<number | null>(null);
-	const [selectedRoleId, setSelectedRoleId] = useState<number>(3);
+	const [selectedRoleId, setSelectedRoleId] = useState<number | null>(null);
 	const [message, setMessage] = useState<Message | null>(null);
 	const [processing, setProcessing] = useState<number | null>(null);
 	const { user: currentUser } = useAuth();
 
 	useEffect(() => {
 		loadUsers();
+		loadRoles();
 	}, []);
 
 	const loadUsers = async () => {
@@ -42,6 +50,26 @@ export const AdminPage: React.FC = () => {
 			if (data.success) setUsers(data.data);
 		} catch (error) {
 			console.error("Ошибка загрузки пользователей:", error);
+		}
+	};
+
+	const loadRoles = async () => {
+		try {
+			const { data } = await apiClient.get("/roles");
+			if (data.success) {
+				setRoles(data.data);
+				// Set default role to SUBSCRIBER (last in list)
+				if (data.data.length > 0 && selectedRoleId === null) {
+					const subscriberRole = data.data.find(
+						(r: Role) => r.name === "ROLE_SUBSCRIBER"
+					);
+					setSelectedRoleId(
+						subscriberRole?.id || data.data[data.data.length - 1].id
+					);
+				}
+			}
+		} catch (error) {
+			console.error("Ошибка загрузки ролей:", error);
 		}
 	};
 
@@ -81,6 +109,12 @@ export const AdminPage: React.FC = () => {
 	};
 
 	const handleAddRole = async (userId: number) => {
+		if (selectedRoleId === null) {
+			setMessage({ type: "error", text: "❌ Выберите роль" });
+			setTimeout(() => setMessage(null), 3000);
+			return;
+		}
+
 		setProcessing(userId);
 		try {
 			const response = await apiClient.put(`/users/${userId}/role`, {
@@ -102,7 +136,15 @@ export const AdminPage: React.FC = () => {
 	};
 
 	const handleRemoveRole = async (userId: number, roleId: number) => {
-		if (userId === currentUser?.id && roleId === 1) {
+		// Find role by ID to check if it's ADMIN
+		const roleToRemove = users
+			.find((u) => u.id === userId)
+			?.roles.find((r) => r.role.id === roleId);
+
+		if (
+			userId === currentUser?.id &&
+			roleToRemove?.role.name === "ROLE_ADMIN"
+		) {
 			setMessage({
 				type: "error",
 				text: "❌ Вы не можете удалить свою роль администратора",
@@ -260,7 +302,7 @@ export const AdminPage: React.FC = () => {
 																	disabled={
 																		processing === user.id ||
 																		(user.id === currentUser?.id &&
-																			r.role.id === 1)
+																			r.role.name === "ROLE_ADMIN")
 																	}
 																	title="Удалить роль"
 																>
@@ -298,21 +340,24 @@ export const AdminPage: React.FC = () => {
 													{editingUserId === user.id ? (
 														<div className={styles.roleForm}>
 															<select
-																value={selectedRoleId}
+																value={selectedRoleId || ""}
 																onChange={(e) =>
 																	setSelectedRoleId(Number(e.target.value))
 																}
 																className={styles.select}
 															>
-																<option value={1}>ADMIN</option>
-																<option value={2}>EDITOR</option>
-																<option value={3}>SUBSCRIBER</option>
+																{roles.map((role) => (
+																	<option key={role.id} value={role.id}>
+																		{role.name.replace("ROLE_", "")}
+																	</option>
+																))}
 															</select>
 															<Button
 																size="sm"
 																variant="primary"
 																onClick={() => handleAddRole(user.id)}
 																loading={processing === user.id}
+																disabled={!selectedRoleId}
 															>
 																Добавить
 															</Button>

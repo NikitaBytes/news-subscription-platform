@@ -2,6 +2,7 @@
 
 import { apiClient } from './client';
 import type { AuthResponse, ApiResponse, User } from '../types';
+import { getOrCreateFingerprint } from '../utils/fingerprint';
 
 export const authApi = {
   register: async (username: string, email: string, password: string) => {
@@ -14,9 +15,11 @@ export const authApi = {
   },
 
   login: async (email: string, password: string) => {
+    const fingerprint = await getOrCreateFingerprint();
     const { data } = await apiClient.post<AuthResponse>('/auth/login', {
       email,
       password,
+      fingerprint,
     });
     return data;
   },
@@ -26,8 +29,16 @@ export const authApi = {
     return data;
   },
 
+  refresh: async () => {
+    const fingerprint = await getOrCreateFingerprint();
+    const { data } = await apiClient.post<AuthResponse>('/auth/refresh', {
+      fingerprint,
+    });
+    return data;
+  },
+
   getMe: async () => {
-    const { data } = await apiClient.get<ApiResponse>('/auth/me');
+    const { data } = await apiClient.get<ApiResponse<User & { roles: string[] }>>('/auth/me');
     return data;
   },
 };

@@ -23,7 +23,7 @@ export async function logUserAction(params: LogActionParams) {
       },
     });
   } catch (error) {
-    console.error('Failed to log user action:', error);
+    console.error('Error logging user action:', error);
   }
 }
 
@@ -33,7 +33,7 @@ export async function logAppError(errorType: string, message: string, url?: stri
       data: { errorType, message, url },
     });
   } catch (error) {
-    console.error('Failed to log application error:', error);
+    console.error('Error logging app error:', error);
   }
 }
 
@@ -49,6 +49,6 @@ export async function logHttpError(
       data: { statusCode, method, url, ipAddress, message },
     });
   } catch (error) {
-    console.error('Failed to log HTTP error:', error);
+    console.error('Error logging HTTP error:', error);
   }
 }

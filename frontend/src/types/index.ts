@@ -51,7 +51,8 @@ export interface AuthResponse {
   success: boolean;
   data: {
     user: User & { roles: string[] };
-    token: string;
+    accessToken: string;
+    fingerprint: string;
   };
   message: string;
 }

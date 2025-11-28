@@ -1,5 +1,5 @@
-// Seed скрипт для начальных данных
-// Создает роли, категории, админа
+// Seed script for initial data
+// Creates roles, categories, admin
 
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
@@ -7,51 +7,51 @@ import bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Начало seed...');
+  console.log('🌱 Starting seed...');
 
-  // Создание ролей
+  // Create roles
   const roles = await Promise.all([
     prisma.role.upsert({
       where: { name: 'ROLE_ADMIN' },
       update: {},
-      create: { name: 'ROLE_ADMIN', description: 'Администратор системы' },
+      create: { name: 'ROLE_ADMIN', description: 'System administrator' },
     }),
     prisma.role.upsert({
       where: { name: 'ROLE_EDITOR' },
       update: {},
-      create: { name: 'ROLE_EDITOR', description: 'Редактор новостей' },
+      create: { name: 'ROLE_EDITOR', description: 'News editor' },
     }),
     prisma.role.upsert({
       where: { name: 'ROLE_SUBSCRIBER' },
       update: {},
-      create: { name: 'ROLE_SUBSCRIBER', description: 'Подписчик' },
+      create: { name: 'ROLE_SUBSCRIBER', description: 'Subscriber' },
     }),
   ]);
 
-  console.log('✅ Роли созданы:', roles.map(r => r.name));
+  console.log('✅ Roles created:', roles.map(r => r.name));
 
-  // Создание категорий
+  // Create categories
   const categories = await Promise.all([
     prisma.category.upsert({
       where: { name: 'IT' },
       update: {},
-      create: { name: 'IT', description: 'Информационные технологии' },
+      create: { name: 'IT', description: 'Information technology' },
     }),
     prisma.category.upsert({
       where: { name: 'Спорт' },
       update: {},
-      create: { name: 'Спорт', description: 'Спортивные новости' },
+      create: { name: 'Спорт', description: 'Sports news' },
     }),
     prisma.category.upsert({
       where: { name: 'Экономика' },
       update: {},
-      create: { name: 'Экономика', description: 'Экономические новости' },
+      create: { name: 'Экономика', description: 'Economic news' },
     }),
   ]);
 
-  console.log('✅ Категории созданы:', categories.map(c => c.name));
+  console.log('✅ Categories created:', categories.map(c => c.name));
 
-  // Создание админа
+  // Create admin
   const adminPassword = await bcrypt.hash('admin123', 12);
   const admin = await prisma.user.upsert({
     where: { email: 'admin@example.com' },
@@ -77,13 +77,13 @@ async function main() {
     },
   });
 
-  console.log('✅ Админ создан: admin@example.com / admin123');
-  console.log('🎉 Seed завершен!');
+  console.log('✅ Admin created: admin@example.com / admin123');
+  console.log('🎉 Seed finished!');
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Ошибка seed:', e);
+    console.error('❌ Seed error:', e);
     process.exit(1);
   })
   .finally(async () => {

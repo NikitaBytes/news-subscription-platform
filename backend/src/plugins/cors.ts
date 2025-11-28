@@ -9,7 +9,17 @@ export default async function corsPlugin(fastify: FastifyInstance) {
     origin: env.CORS_ORIGIN,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    exposedHeaders: ['Content-Length', 'Content-Type'],
+    // Explicitly include common custom headers and case-variations
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Fingerprint',
+      'x-fingerprint',
+      'X-Requested-With',
+      'Accept',
+      'Origin'
+    ],
+    // Expose content-related headers to the browser
+    exposedHeaders: ['Content-Length', 'Content-Type', 'X-Request-Id'],
   });
 }

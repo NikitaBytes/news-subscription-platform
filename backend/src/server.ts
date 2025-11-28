@@ -12,6 +12,7 @@ import fastifyCors from '@fastify/cors';
 import fastifyHelmet from '@fastify/helmet';
 import fastifyJwt from '@fastify/jwt';
 import httpErrorLogger from './plugins/httpErrorLogger';
+import cookiePlugin from './plugins/cookie';
 
 // Routes
 import authRoutes from './routes/auth.routes';
@@ -20,6 +21,7 @@ import categoriesRoutes from './routes/categories.routes';
 import subscriptionsRoutes from './routes/subscriptions.routes';
 import usersRoutes from './routes/users.routes';
 import logsRoutes from './routes/logs.routes';
+import rolesRoutes from './routes/roles.routes';
 
 const fastify = Fastify({
   logger: {
@@ -39,8 +41,17 @@ fastify.register(fastifyCors, {
   origin: env.CORS_ORIGIN,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Content-Length', 'Content-Type'],
+  // Allow custom fingerprint header and common headers (case variations)
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Fingerprint',
+    'x-fingerprint',
+    'X-Requested-With',
+    'Accept',
+    'Origin'
+  ],
+  exposedHeaders: ['Content-Length', 'Content-Type', 'X-Request-Id'],
 });
 
 fastify.register(fastifyHelmet, {
@@ -51,6 +62,9 @@ fastify.register(fastifyHelmet, {
     },
   },
 });
+
+// Register Cookie plugin for secure Refresh Token storage
+fastify.register(cookiePlugin);
 
 // JWT registration directly (globally)
 fastify.register(fastifyJwt, {
@@ -70,6 +84,7 @@ fastify.register(categoriesRoutes, { prefix: '/api/categories' });
 fastify.register(subscriptionsRoutes, { prefix: '/api/subscriptions' });
 fastify.register(usersRoutes, { prefix: '/api/users' });
 fastify.register(logsRoutes, { prefix: '/api/logs' });
+fastify.register(rolesRoutes, { prefix: '/api' });
 
 // Health check
 fastify.get('/health', async () => {
@@ -85,7 +100,7 @@ const start = async () => {
     // Wait for all plugins to load
     await fastify.ready();
     await fastify.listen({ port: env.PORT, host: env.HOST });
-    console.log(`🚀 Server is running at http://${env.HOST}:${env.PORT}`);
+    console.log(`🚀 Server running at http://${env.HOST}:${env.PORT}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
